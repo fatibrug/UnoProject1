@@ -17,12 +17,8 @@ public class Carddeck {
     }
 
     public void generateDeck(){
-       Enum[] e= new Enum[4];
-       e[0]= Color.RED;
-       e[1]= Color.YELLOW;
-       e[2]= Color.BLUE;
-       e[3]= Color.GREEN;
-//       Card c= new Card(0,Color.BLACK);
+       Enum[] e= new Enum[]{Color.RED,Color.YELLOW,Color.BLUE,Color.GREEN};
+  
        for(int i=0; i<4;i++){
            for(int j=0; j<2; j++){
                for(int k=1; k<13; k++){
