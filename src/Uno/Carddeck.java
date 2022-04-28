@@ -25,6 +25,7 @@ public class Carddeck {
                    Card c=new Card(k,e[i]);
                    deck.add(c);
                }
+
            }
        }
        for(int i=0; i<4; i++){
