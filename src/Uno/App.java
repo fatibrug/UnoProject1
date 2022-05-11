@@ -54,12 +54,13 @@ public class App {
             String userName = input.next();
             if (!names.contains(userName)) {
                 players.add(new Player(userName));
-                System.out.println("Welcome to the game, player " + players.size()+ " "+userName+"!");
+                System.out.println("Welcome to the game, "+"player"+players.size()+ " " +userName+"!");
                 names.add(userName);
                 i++;
             } else {
                 output.println("The name already exists!");
             }
+//            System.out.println("would you like to play against a bot? Choose ");
         } while (true && i < 4);
     }
 
