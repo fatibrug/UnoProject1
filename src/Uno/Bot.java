@@ -1,15 +1,15 @@
 package Uno;
 
 public class Bot extends Player{
-    private int level;
+    private int botlevel;
 
-    public Bot(String name, int level) {
+    public Bot(String name, int botlevel) {
         super(name);
-        this.level = level;
+        this.botlevel = botlevel;
     }
 
     @Override
     public String toString() {
-        return name +  " level" + level;
+        return name +  " level" + botlevel;
     }
 }

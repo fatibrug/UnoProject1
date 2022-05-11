@@ -47,21 +47,38 @@ public class App {
 
 
     private void createPlayers() {
-        int i = 0;
-        ArrayList<String> names = new ArrayList<>();
+        System.out.println("How many Bots would you like to invite in the game?");
+        int botCount = input.nextInt();
+        int i=0;
+            do {
+                System.out.println("Please choose a name for the bot!");
+                String botName = input.next();
+                System.out.println("Please choose a level for the bot from 1 to 3!");
+                int botLevel = input.nextInt();
+                if (botLevel==1||botLevel==2||botLevel==3) {
+                    players.add(new Bot(botName,botLevel));
+                    System.out.println("Welcome to the game, "+"player"+players.size()+ " " +botName+"!");
+                    i++;
+                } else {
+                    output.println("Please choose a valid level number!");
+                }
+            } while (true && i < botCount);
+
+        int j = 0;
+        ArrayList<String> playerNames = new ArrayList<>();
         do {
             System.out.println("Please choose your username!");
             String userName = input.next();
-            if (!names.contains(userName)) {
+            if (!playerNames.contains(userName)) {
                 players.add(new Player(userName));
                 System.out.println("Welcome to the game, "+"player"+players.size()+ " " +userName+"!");
-                names.add(userName);
-                i++;
+                playerNames.add(userName);
+                j++;
             } else {
                 output.println("The name already exists!");
             }
-//            System.out.println("would you like to play against a bot? Choose ");
-        } while (true && i < 4);
+//
+        } while (true && j < 4-botCount);
     }
 
 
