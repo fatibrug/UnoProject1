@@ -55,14 +55,27 @@ public class App {
                 String botName = input.next();
                 System.out.println("Please choose a level for the bot from 1 to 3!");
                 int botLevel = input.nextInt();
-                if (botLevel==1||botLevel==2||botLevel==3) {
-                    players.add(new Bot(botName,botLevel));
-                    System.out.println("Welcome to the game, "+"player"+players.size()+ " " +botName+"!");
-                    i++;
-                } else {
-                    output.println("Please choose a valid level number!");
-                }
-            } while (true && i < botCount);
+                if (botLevel > 0 && botLevel < 4) {
+                    if (botLevel == 1) {
+                        players.add(new Bot(botName));
+                        System.out.println("Welcome to the game, " + "player" + players.size() + " " + botName + "!");
+                        i++;
+                    } else if (botLevel == 2) {
+                        players.add(new SmartBot(botName));
+                        System.out.println("Welcome to the game, " + "player" + players.size() + " " + botName + "!");
+                        i++;
+                    } else if (botLevel == 3) {
+                        players.add(new ExpertBot(botName));
+                        System.out.println("Welcome to the game, " + "player" + players.size() + " " + botName + "!");
+                        i++;
+                    }
+                }else {
+                        output.println("Please choose a valid level number!");
+                    }
+
+            }
+                while (true && i < botCount) ;
+
 
         int j = 0;
         ArrayList<String> playerNames = new ArrayList<>();
@@ -70,7 +83,7 @@ public class App {
             System.out.println("Please choose your username!");
             String userName = input.next();
             if (!playerNames.contains(userName)) {
-                players.add(new Player(userName));
+                players.add(new HumanPlayer(userName));
                 System.out.println("Welcome to the game, "+"player"+players.size()+ " " +userName+"!");
                 playerNames.add(userName);
                 j++;
@@ -85,8 +98,7 @@ public class App {
     private void createHands() {
         for (int i = 0; i < players.size(); i++) {
             for (int j = 0; j < 7; j++) {
-                players.get(i).hand.add(cardsInGame.deck.get(0));
-                cardsInGame.deck.remove(0);
+                players.get(i).hand.add(cardsInGame.deck.remove(0));
             }
         }
     }

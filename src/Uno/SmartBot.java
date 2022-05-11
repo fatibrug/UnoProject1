@@ -1,15 +1,14 @@
 package Uno;
 
-public class Bot extends Player{
+public class SmartBot extends Player{
 
-    public Bot(String name) {
+    public SmartBot(String name) {
         super(name);
-
     }
 
     @Override
     public String toString() {
-        return "Bot " + name;
+        return "SmartBot " + name;
     }
 
     @Override
