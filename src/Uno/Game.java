@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 
-public class App {
+public class Game {
 
     private final Scanner input;
     private final PrintStream output;
@@ -13,27 +13,25 @@ public class App {
     private List<Player> players = new ArrayList<>();
     private Carddeck drawPile = new Carddeck();
     private List<Card> discardPile = new ArrayList<>();
+    private int round=1;
+    private int session=1;
 
-    public App(Scanner input, PrintStream output) {
+    public Game(Scanner input, PrintStream output) {
         this.input = input;
         this.output = output;
     }
 
     public void Run() {
         initialize();
-//        printState();
+
 
         while (!exit) {
-//            readUserInput();
 //            updateState();
 //            printState();
         }
     }
 
-//    private void readUserInput() {
-//      inputName();
-//      inputGroesse();
-//    }
+
 
     private void initialize() {
         drawPile.generateDeck();
@@ -42,6 +40,24 @@ public class App {
         createHands();
         discardPile.add(drawPile.deck.remove(0));
         System.out.println(totalCards());
+    }
+
+    private boolean roundOver(){
+        for(Player p: players){
+            if(p.hand.size()==0){
+                round++;
+                return true;
+            }
+        }return false;
+    }
+
+    private boolean sessionOver(){
+        for(Player p: players){
+            if(p.points==500){
+                session++;
+                return true;
+            }
+        }return false;
     }
 
 
