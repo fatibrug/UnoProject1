@@ -15,6 +15,7 @@ public class Game {
     private List<Card> discardPile = new ArrayList<>();
     private int round=1;
     private int session=1;
+    private boolean isClockwise = true;
 
     public Game(Scanner input, PrintStream output) {
         this.input = input;
@@ -40,6 +41,46 @@ public class Game {
         createHands();
         discardPile.add(drawPile.deck.remove(0));
         System.out.println(totalCards());
+        playSession();
+    }
+
+    private void playSession() {
+        do {
+            playRound();
+        } while (!sessionOver());
+
+        //TODO add logic after session is over if needed
+    }
+
+    private void playRound() {
+        // Round always starts from the first player
+        int currentPlayerIndex = 0;
+
+        do {
+
+            players.get(currentPlayerIndex).play();
+
+            if(isOrderClockwise()) {
+                currentPlayerIndex = currentPlayerIndex+1;
+                if(currentPlayerIndex > players.size()-1)
+                     currentPlayerIndex = 0;
+            } else {
+                currentPlayerIndex = currentPlayerIndex-1;
+                if(currentPlayerIndex < 0)
+                    currentPlayerIndex = players.size()-1;
+            }
+
+        }
+        while(!roundOver());
+
+        //TODO add additional logic for round over
+        // count points or whatever
+    }
+
+    private boolean isOrderClockwise() {
+        //TODO Make logic to check some variable
+        // it should be changed when the reverse card is thrown
+        return isClockwise;
     }
 
     private boolean roundOver(){
