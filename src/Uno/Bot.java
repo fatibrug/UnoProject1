@@ -1,5 +1,7 @@
 package Uno;
 
+import java.util.Scanner;
+
 public class Bot extends Player{
 
     public Bot(String name) {
@@ -13,7 +15,10 @@ public class Bot extends Player{
     }
 
     @Override
-    public void play() {
-
+    public Card play() {
+        Card discardedCard = hand.get(0);
+        System.out.println("Card played: "+discardedCard);
+        hand.remove(0);
+        return discardedCard;
     }
 }

@@ -12,7 +12,7 @@ public class ExpertBot extends Player {
     }
 
     @Override
-    public void play() {
-
+    public Card play() {
+        return null;
     }
 }
