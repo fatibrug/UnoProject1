@@ -15,10 +15,15 @@ public class Bot extends Player{
     }
 
     @Override
-    public Card play() {
+    public Card play(String s) {
         Card discardedCard = hand.get(0);
         System.out.println("Card played: "+discardedCard);
         hand.remove(0);
         return discardedCard;
+    }
+
+    @Override
+    public String inputAction() {
+        return "0";
     }
 }

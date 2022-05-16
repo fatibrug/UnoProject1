@@ -21,8 +21,8 @@ public abstract class Player {
                 '}';
     }
 
-
-    public abstract Card play();
+    public abstract String inputAction();
+    public abstract Card play(String s);
 
 
 }

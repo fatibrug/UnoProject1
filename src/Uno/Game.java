@@ -17,6 +17,8 @@ public class Game {
     private int round = 1;
     private int session = 1;
     private boolean isClockwise = true;
+    private int currentPlayerIndex = 0;
+    private Player currentPlayer;
 
     public Game(Scanner input, PrintStream output) {
         this.input = input;
@@ -26,24 +28,30 @@ public class Game {
     public void Run() {
         initialize();
         printState();
-        do {
-            playerLoop();
-            printState();
-        } while (true);
-        //} while (!sessionOver());
+//        for(int j=0; j<4; j++) {
+//            for (int i = 0; i < players.get(j).hand.size(); i++) {
+//                System.out.println(players.get(j).name+" Card " + (i + 1) + ": " + players.get(j).hand.get(i));
+//            }
+//        }
+            do {
+                playerLoop();
+                printState();
+            } while (!roundOver());
+            //} while (!sessionOver());
 
 //        readUserInput();
 //        updateState();
 
     }
 
-
     private void initialize() {
         drawPile.generateDeck();
         createPlayers();
+        Collections.shuffle(players);
         System.out.println(players);
         createHands();
         discardPile.add(drawPile.deck.remove(0));
+        currentPlayer = players.get(0);
     }
 
 
@@ -53,20 +61,27 @@ public class Game {
     }
 
     private void playerLoop() {
-        System.out.println("It is your turn to play, " + nextPlayer().name + "!"+" Please choose the number of the card to discard!");
-        discardPile.add(nextPlayer().play());
-
+        System.out.println("It is your turn to play, " + currentPlayer.name + "!");
+        String inputAction= currentPlayer.inputAction();
+        if(inputAction.equals("draw")){
+            // draw a new card
+        }else if(inputAction.equals("help")){
+            //show help menu
+        }else{
+            Card card = currentPlayer.play(inputAction);
+            //check if card is null, if null repeat the loop
+            discardPile.add(card);
+        }
+        currentPlayer = nextPlayer();
     }
 
     private Player nextPlayer() {
-        // shuffle the players list to choose which player plays first.
-        Collections.shuffle(players);
-        int currentPlayerIndex = 0;
-        Player nextPlayer = players.get(currentPlayerIndex);
-        do{
-            players.get(currentPlayerIndex);
+
+
             if (isOrderClockwise()) {
                 currentPlayerIndex = currentPlayerIndex + 1;
+
+
                 if (currentPlayerIndex > players.size() - 1)
                     currentPlayerIndex = 0;
             } else {
@@ -74,12 +89,12 @@ public class Game {
                 if (currentPlayerIndex < 0)
                     currentPlayerIndex = players.size() - 1;
             }
+            Player nextPlayer = players.get(currentPlayerIndex);
             return nextPlayer;
 
-        }
-        while (!roundOver());
-    }
 
+
+    }
 
 
     private boolean isOrderClockwise() {
@@ -92,6 +107,7 @@ public class Game {
         for (Player p : players) {
             if (p.hand.size() == 0) {
                 round++;
+                System.out.println(p.name + " has won.");
                 return true;
             }
         }
@@ -130,7 +146,7 @@ public class Game {
                 botCount = Integer.parseInt(botCountStr);
 
                 if(botCount <0 || botCount>4){
-                    output.println("The number of bots should not be greater than 4!");
+                    output.println("The number of bots should be between 1 and 4!");
                     countError = true;
                 } else countError = false;
 
@@ -179,7 +195,7 @@ public class Game {
 
         int j = 0;
         ArrayList<String> playerNames = new ArrayList<>();
-        do {
+        while (j < 4 - botCount) {
             System.out.println("Please choose the username for the human player!");
             String userName = input.next();
             if (!playerNames.contains(userName)) {
@@ -190,8 +206,7 @@ public class Game {
             } else {
                 output.println("The name already exists!");
             }
-//
-        } while (true && j < 4 - botCount);
+        }
     }
 
 

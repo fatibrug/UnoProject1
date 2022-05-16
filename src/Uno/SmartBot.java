@@ -12,7 +12,12 @@ public class SmartBot extends Player{
     }
 
     @Override
-    public Card play() {
+    public Card play(String s) {
     return null;
+    }
+
+    @Override
+    public String inputAction() {
+        return null;
     }
 }
