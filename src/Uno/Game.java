@@ -64,6 +64,8 @@ public class Game {
         System.out.println("It is your turn to play, " + currentPlayer.name + "!");
         String inputAction= currentPlayer.inputAction();
         if(inputAction.equals("draw")){
+
+//            currentPlayer.inputAction();
             // draw a new card
         }else if(inputAction.equals("help")){
             //show help menu
@@ -77,10 +79,8 @@ public class Game {
 
     private Player nextPlayer() {
 
-
             if (isOrderClockwise()) {
                 currentPlayerIndex = currentPlayerIndex + 1;
-
 
                 if (currentPlayerIndex > players.size() - 1)
                     currentPlayerIndex = 0;
@@ -92,14 +92,15 @@ public class Game {
             Player nextPlayer = players.get(currentPlayerIndex);
             return nextPlayer;
 
-
-
     }
 
 
     private boolean isOrderClockwise() {
         //TODO Make logic to check some variable
         // it should be changed when the reverse card is thrown
+        if(discardPile.get(0).number==10){
+            return false;
+        }
         return true;
     }
 
