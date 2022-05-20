@@ -1,10 +1,9 @@
 package Uno;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 import java.io.PrintStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
 
 public class Game {
 
@@ -12,7 +11,8 @@ public class Game {
     private final PrintStream output;
     private boolean exit = false;
     private List<Player> players = new ArrayList<>();
-    private Carddeck drawPile = new Carddeck();
+    private Carddeck gameDeck = new Carddeck();
+    private List<Card> drawPile = gameDeck.deck;
     private List<Card> discardPile = new ArrayList<>();
     private int round = 1;
     private int session = 1;
@@ -28,11 +28,8 @@ public class Game {
     public void Run() {
         initialize();
         printState();
-//        for(int j=0; j<4; j++) {
-//            for (int i = 0; i < players.get(j).hand.size(); i++) {
-//                System.out.println(players.get(j).name+" Card " + (i + 1) + ": " + players.get(j).hand.get(i));
-//            }
-//        }
+        currentPlayer = players.get(0);
+//        printPlayerHand(); //print the hands of the players for debug purpose
             do {
                 playerLoop();
                 printState();
@@ -41,40 +38,57 @@ public class Game {
 
 //        readUserInput();
 //        updateState();
+    }
 
+//
+    private void printPlayerHand(){
+        for(int j=0; j<4; j++) {
+            for (int i = 0; i < players.get(j).hand.size(); i++) {
+                System.out.println(players.get(j).name+" Card " + (i + 1) + ": " + players.get(j).hand.get(i));
+            }
+        }
     }
 
     private void initialize() {
-        drawPile.generateDeck();
+        gameDeck.generateDeck();
         createPlayers();
         Collections.shuffle(players);
         System.out.println(players);
         createHands();
-        discardPile.add(drawPile.deck.remove(0));
-        currentPlayer = players.get(0);
+        discardPile.add(drawPile.remove(0));
     }
 
-
-    private void printState() {
-        System.out.println(totalCards());
-
-    }
 
     private void playerLoop() {
         System.out.println("It is your turn to play, " + currentPlayer.name + "!");
+        readUserInput();
+
+    }
+
+    private void readUserInput(){
         String inputAction= currentPlayer.inputAction();
         if(inputAction.equals("draw")){
-
-//            currentPlayer.inputAction();
-            // draw a new card
-        }else if(inputAction.equals("help")){
-            //show help menu
-        }else{
+            // draw a card from the drawPile and add to the hand of the current player
+            currentPlayer.hand.add(drawPile.remove(0));
+            readUserInput();
+        }
+        else if(inputAction.equals("help")){
+            //read the game rules from the text file in the console.
+            readRules();
+            readUserInput();
+        }
+        else if(inputAction.equals("skip")){
+            // if skip, then the next player becomes the current player
+            currentPlayer = nextPlayer();
+        }
+        else if (inputAction.chars().allMatch(Character::isDigit) && Integer.parseInt(inputAction) > 0 && Integer.parseInt(inputAction) <= currentPlayer.hand.size()){
+            // the default case is when a valid index number is given as input, then play method will be called.
+            //the return value of the play method will be the card to be added to the discard pile
             Card card = currentPlayer.play(inputAction);
             //check if card is null, if null repeat the loop
             discardPile.add(card);
+            currentPlayer = nextPlayer();
         }
-        currentPlayer = nextPlayer();
     }
 
     private Player nextPlayer() {
@@ -125,14 +139,45 @@ public class Game {
         return false;
     }
 
+    private void readRules(){
+        try {
+            File myObj = new File("gamerules.txt");
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                System.out.println(data);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+
+    private void printState() {
+        System.out.println(totalCards());
+    }
+
+
+    // method to display the player number and the points
+    private HashMap<String, Integer> playerPoint(){
+        HashMap<String,Integer> map = new HashMap<>();
+        for(Player p: players){
+            map.put(p.name, p.points);
+        }
+        return map;
+    }
+
 
     private int totalCards() {
         int sumPlayerHands = 0;
         for (int i = 0; i < 4; i++) {
             sumPlayerHands += players.get(i).hand.size();
         }
-        return sumPlayerHands + drawPile.deck.size() + discardPile.size();
+        return sumPlayerHands + drawPile.size() + discardPile.size();
     }
+
 
 //create 4 players, first select the number of bots (error exception catch used in case if the number is invalid or not a number)
 //then select the level of the bot(error exception catch used in case if the number is invalid or not a number)
@@ -214,7 +259,7 @@ public class Game {
     private void createHands() {
         for (int i = 0; i < players.size(); i++) {
             for (int j = 0; j < 7; j++) {
-                players.get(i).hand.add(drawPile.deck.remove(0));
+                players.get(i).hand.add(drawPile.remove(0));
             }
         }
     }
