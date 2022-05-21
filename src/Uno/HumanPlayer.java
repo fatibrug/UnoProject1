@@ -24,8 +24,7 @@ public class HumanPlayer extends Player {
         int cardIndex = 0;
         cardIndex = Integer.parseInt(indexStr);
         System.out.println("Card played: " + hand.get(cardIndex - 1));
-        hand.remove(cardIndex - 1);
-        return hand.get(cardIndex - 1);
+        return hand.remove(cardIndex - 1);
     }
 
     //show the player what cards he/she has in hand
@@ -56,7 +55,7 @@ public class HumanPlayer extends Player {
             else if (action.equals("h")) {
                 action = "help";
             }
-            else if (action.equals("skip")) {
+            else if (action.equals("s")) {
                 action = "skip";
             }
             else {
