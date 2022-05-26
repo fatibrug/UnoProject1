@@ -1,6 +1,7 @@
 package Uno;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public abstract class Player {
     protected String name;
@@ -21,6 +22,20 @@ public abstract class Player {
                 '}';
     }
 
+    public int cardValueinHand(){
+        int cardValue=0;
+        for(Card c: hand){
+            cardValue+=c.value;
+        }
+        return cardValue;
+    }
+
+    public void gainPoints(int gainedPoints){
+        points += gainedPoints;
+    }
+
+
+    public abstract boolean unoDeclare();//if the player declares uno or not
     public abstract String inputAction();
     public abstract Card play(String s);
 

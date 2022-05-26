@@ -11,15 +11,15 @@ public class Game {
     private final PrintStream output;
     private boolean exit = false;
     private List<Player> players = new ArrayList<>();
-    private Carddeck gameDeck = new Carddeck();
-    private List<Card> drawPile = gameDeck.deck;
-    private List<Card> discardPile = new ArrayList<>();
+    private Carddeck drawDeck = new Carddeck();
+    private DiscardDeck discardDeck= new DiscardDeck();
     private int round = 1;
     private int session = 1;
     private boolean isClockwise = true;
     private int currentPlayerIndex = 0;
     private Player currentPlayer;
     private boolean drawn = false; //avoid the user inputting "draw" twice in a row
+    private HashMap<String, Integer> playerPoint;
 
     public Game(Scanner input, PrintStream output) {
         this.input = input;
@@ -35,8 +35,6 @@ public class Game {
         } while (!roundOver());
         //      updateState();
         //} while (!sessionOver());
-
-
     }
 
     //method to print out the hands of the 4 players for debugging purposes
@@ -48,27 +46,43 @@ public class Game {
         }
     }
 
+// initialize the game:
+// generate the drawdeck with 108 cards
+// create 4 players and shuffle the players to pick the first player to start the game
+// 7 cards for each players
+// pick the last card from the draw pile to put on the discard pile
+// If the top card of discard pile is a draw 4 action card, the card will be returned to the draw pile.
+// The draw pile will be reshuffled and a new top card from the drawn from the draw pile.
     private void initialize() {
-        gameDeck.generateDeck();
+        drawDeck.generateDeck();
         createPlayers();
         Collections.shuffle(players);
         System.out.println(players);
         createHands();
-        discardPile.add(drawPile.remove(0));
+        discardDeck.getNewCard(drawDeck.drawACard());
+        checkIfDraw4TurnUpAtTheBeginning();
     }
 
     //The game player loop: It starts from the 0 position of the player list and loop with the nextPlayer method
     private void playerLoop() {
-        currentPlayer = players.get(currentPlayerIndex);
-        ifDrawActionCards();
+        //The game begin with the index 0 unless the first card is the skip or pull2 or pull 4 card.
         //if the current player didn't have to draw 2 or 4 cards, he can play a valid card. Otherwise, he has to draw cards and skip his/her turn.
-        if (ifDrawActionCards() != true) {
+        if(!suspend()) {
+            currentPlayer = players.get(currentPlayerIndex);
+        }else currentPlayer = nextPlayer();
+
+        if (!ifDrawActionCards()) {
             output.println("**************************************************************");
             System.out.println("It is your turn to play, " + currentPlayer.name + "!");
             showLastDiscardedCard();
             readUserInput();
             drawn = false;// drawn back to false for the next player
         }
+
+        if(currentPlayer.hand.size()==1){
+            unoNoDeclaredPenalty();
+        }
+
         currentPlayer = nextPlayer();
     }
 
@@ -148,17 +162,23 @@ public class Game {
         }
     }
 
+// create hands for all players, each with 7 cards from the draw pile
     private void createHands() {
         for (int i = 0; i < players.size(); i++) {
             for (int j = 0; j < 7; j++) {
-                players.get(i).hand.add(drawPile.remove(0));
+                players.get(i).hand.add(drawDeck.drawACard());
             }
         }
     }
 
+// return the top card on the discard pile
+    private Card getTopCard(){
+        return discardDeck.topCard();
+    }
+
     //show the last card on the discard pile that player shall refer to.
     private void showLastDiscardedCard() {
-        output.println("The last card on Discard pile is: " + discardPile.get(discardPile.size()-1).toString());
+        output.println("The last card on Discard pile is: " + getTopCard().toString());
     }
 
     //read user input of the current user before the play method. The bot user input is null.
@@ -167,7 +187,7 @@ public class Game {
         if (inputAction.equals("draw")) {
             if (!drawn) {
                 // if the input action id "draw" , the current player draws a card from the drawPile and add to the hand of the current player if he/she has not drawn a card before
-                currentPlayer.hand.add(drawPile.remove(0));
+                currentPlayer.hand.add(drawDeck.drawACard());
                 drawn = true;
             } else {
                 output.println("invalid action! You have already drawn a card/cards");
@@ -188,12 +208,14 @@ public class Game {
         } else if (inputAction.chars().allMatch(Character::isDigit) && Integer.parseInt(inputAction) > 0 && Integer.parseInt(inputAction) <= currentPlayer.hand.size()) {
             // the default case is when a valid index number is given as input, then play method will be called.
             //the return value of the play method will be the card to be added to the discard pile
+            Card currentTopCard = getTopCard();
             Card card = currentPlayer.play(inputAction);
-            discardPile.add(card);
-            if (!card.color.equals(discardPile.get(0).color) || card.number != discardPile.get(0).number) {
-                //check if card is valid. If not valid, the player will take back his card and get a penalty card.
-                currentPlayer.hand.add(discardPile.remove(discardPile.size()-1));
-                currentPlayer.hand.add(drawPile.remove(0));
+            discardDeck.getNewCard(card);
+            if (!card.color.equals(currentTopCard.color) && card.number != currentTopCard.number) {
+                //check if card is valid. If not valid, the player will take back his last played card from the discard pile and draw a penalty card from the draw pile.
+                currentPlayer.hand.add(getTopCard());
+                discardDeck.removeCard(getTopCard());
+                currentPlayer.hand.add(drawDeck.drawACard());
                 output.println("The move is invalid! You shall take back your card and get a penalty card. Here are your cards in hand now: ");
                 output.println(currentPlayer.hand);
             }
@@ -219,16 +241,44 @@ public class Game {
 
     }
 
+//    here are the methods to update the game state
+    private void updateState(){
+        updateWinnerPoints();
+    }
+
     private boolean roundOver() {
         for (Player p : players) {
             if (p.hand.size() == 0) {
                 round++;
-                System.out.println(p.name + " has won.");
                 return true;
             }
         }
         return false;
     }
+
+//    method to calculate the points gained by the winner in each round
+    private void updateWinnerPoints() {
+        Player winner = null;
+        if (roundOver()) {
+            for (Player p : players) {
+                if (p.hand.size() == 0) {
+                  winner = p;
+                }
+            }
+            System.out.println(winner.name + " has won.");
+           winner.gainPoints(totalCardPoints());
+        }
+    }
+
+//    method to calculate all the card values in the player hands.
+    private int totalCardPoints(){
+        int totalCardPoints=0;
+        for(Player p: players){
+            totalCardPoints+=p.cardValueinHand();
+        }
+        return totalCardPoints;
+    }
+
 
     private boolean sessionOver() {
         for (Player p : players) {
@@ -255,28 +305,20 @@ public class Game {
         }
     }
 
-
+// print the current state of the game
     private void printState() {
+        System.out.println("Session: "+session+ ", Round: "+round);
         System.out.println(totalCards());
     }
 
 
-    // method to display the player number and the points
-    private HashMap<String, Integer> playerPoint() {
-        HashMap<String, Integer> map = new HashMap<>();
-        for (Player p : players) {
-            map.put(p.name, p.points);
-        }
-        return map;
-    }
-
-
+// calculate the total number of cards in the game-It should be always 108
     private int totalCards() {
         int sumPlayerHands = 0;
         for (int i = 0; i < 4; i++) {
             sumPlayerHands += players.get(i).hand.size();
         }
-        return sumPlayerHands + drawPile.size() + discardPile.size();
+        return sumPlayerHands + drawDeck.getCount() + discardDeck.getCount();
     }
 
 
@@ -286,36 +328,61 @@ public class Game {
     private boolean isOrderClockwise() {
         //TODO Make logic to check some variable
         // it should be changed when the reverse card is thrown
-        if (discardPile.get(0).number == 10) {
-            return false;
+        if (getTopCard().number == 10) {
+            if(isClockwise)
+                isClockwise= false;
+            else isClockwise = true;
         }
-        return true;
+        return isClockwise;
     }
-
 
     //the method below check if a pull 2 or draw 4 cards is on the discard pile. If yes, the current player should draw 2 or 4 cards
     //the boolean return value shall be used in the player loop method
     private boolean ifDrawActionCards() {
         boolean drawAction = false;
         int numberOfCardToDraw = 0;
-        if (discardPile.get(0).number == 12 || discardPile.get(0).number == 14) {
-            numberOfCardToDraw = drawPile.get(0).number - 10;
-            for (int i = 0; i < numberOfCardToDraw; i++) {
-                currentPlayer.hand.add(drawPile.remove(0));
+        if (getTopCard().number == 12 || getTopCard().number == 14) {
+            numberOfCardToDraw = getTopCard().number - 10;// either draw 2 cards or 4 cards
+                currentPlayer.hand.addAll(Arrays.asList(drawDeck.drawACard(numberOfCardToDraw)));
                 return true;
-            }
+        }
+        return false;
+    }
+// check if the draw4 card turns up at the beginning of the game. if yes, the card will be put back to the draw pile and the draw pile will be reshuffled.
+    private void checkIfDraw4TurnUpAtTheBeginning(){
+        if(getTopCard().number == 14){
+            drawDeck.addCard(discardDeck.drawACard());
+            drawDeck.shuffle();
+            discardDeck.getNewCard(drawDeck.drawACard());
+        }
+    }
+
+
+    //if the draw pile runs out, the discard pile will be shuffled and become the new draw pile. The first card will be placed on the discard pile
+    private void discardPileBecomesDrawPile() {
+        if (drawDeck.isEmpty()) {
+            drawDeck.deckSwap(discardDeck.getDeck());
+        }
+    }
+
+//in case of ta suspend card, the current player's turn will be skipped
+    private boolean suspend(){
+        if(getTopCard().number==11) {
+            System.out.println("Oops, you have to skip your turn because of the suspend card!");
+            return true;
         }
         return false;
     }
 
-    //if the draw pile runs out, the discard pile will be shuffled and become the new draw pile. The first card will be placed on the discard pile
-    private void discardPileBecomesDrawPile(){
-        if(drawPile.size()==0){
-            for(int i=0; i<discardPile.size(); i++){
-                drawPile.add(discardPile.remove(i));
-            }
-            Collections.shuffle(drawPile);
-            discardPile.add(drawPile.remove(0));
-        }
+//    check if the player forgets to declare UNO in time. If not, he/she will get a penalty card
+    private void unoNoDeclaredPenalty(){
+        boolean unoNoDeclaredPenalty=false;
+      if(currentPlayer.unoDeclare()){
+          unoNoDeclaredPenalty = false;
+      }unoNoDeclaredPenalty = true;
+      if(unoNoDeclaredPenalty){
+          currentPlayer.hand.add(drawDeck.drawACard());
+      }
     }
+
 }

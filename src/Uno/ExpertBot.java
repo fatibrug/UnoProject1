@@ -20,4 +20,19 @@ public class ExpertBot extends Player {
     public String inputAction() {
         return null;
     }
+
+    @Override
+    public int cardValueinHand() {
+        return super.cardValueinHand();
+    }
+
+    @Override
+    public void gainPoints(int gainedPoints) {
+        super.gainPoints(gainedPoints);
+    }
+
+    @Override
+    public boolean unoDeclare() {
+        return true;
+    }
 }

@@ -66,6 +66,15 @@ public class HumanPlayer extends Player {
             return action;
     }
 
+    @Override
+    public int cardValueinHand() {
+        return super.cardValueinHand();
+    }
+
+    @Override
+    public void gainPoints(int gainedPoints) {
+        super.gainPoints(gainedPoints);
+    }
 
     public boolean unoDeclare(){
         System.out.println("If you have only one card left, please enter 'uno'! ");

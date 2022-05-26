@@ -23,7 +23,22 @@ public class Bot extends Player{
     }
 
     @Override
+    public int cardValueinHand() {
+        return super.cardValueinHand();
+    }
+
+    @Override
+    public void gainPoints(int gainedPoints) {
+        super.gainPoints(gainedPoints);
+    }
+
+    @Override
     public String inputAction() {
         return "0";
+    }
+
+    @Override
+    public boolean unoDeclare() {
+        return false;
     }
 }

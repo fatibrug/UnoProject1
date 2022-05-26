@@ -16,6 +16,18 @@ public class Carddeck {
         deck.remove(c);
     }
 
+    public Card drawACard(){
+        return deck.remove(deck.size()-1);
+    }
+
+    public Card[] drawACard(int count){
+        Card[] cardsToDraw = new Card[count];
+        for(int i=0; i<count; i++){
+            cardsToDraw[i]= drawACard();
+        }
+        return cardsToDraw;
+    }
+
     public void generateDeck(){
        Enum[] e= new Enum[]{Color.RED,Color.YELLOW,Color.BLUE,Color.GREEN};
 
@@ -36,9 +48,13 @@ public class Carddeck {
           deck.add(c2);
           deck.add(c3);
        }
+       shuffle();
+    }
 
+    public void shuffle(){
         Collections.shuffle(deck);
     }
+
 
     @Override
     public String toString() {
@@ -46,4 +62,20 @@ public class Carddeck {
                 "deck=" + deck +
                 '}';
     }
+
+    public int getCount() {
+        return deck.size();
+    }
+
+    public boolean isEmpty() {
+        return deck.isEmpty();
+    }
+
+    public void deckSwap(ArrayList<Card> discardPile){
+            for(int i=0; i<discardPile.size(); i++){
+                deck.add(discardPile.remove(i));
+            }
+            Collections.shuffle(deck);
+            discardPile.add(drawACard());
+        }
 }
