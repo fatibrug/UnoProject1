@@ -48,9 +48,9 @@ public class Card {
             cardPrint = "Suspend " + color;
         } else if (number == 12) {
             cardPrint = "Pull2 " + color;
-        } else if (number == 13) {
-            cardPrint = "Draw 4";
         } else if (number == 14) {
+            cardPrint = "Draw 4";
+        } else if (number == 13) {
             cardPrint = "Color Selection";
         }
         return cardPrint;

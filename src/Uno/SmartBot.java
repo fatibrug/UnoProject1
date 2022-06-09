@@ -11,6 +11,15 @@ public class SmartBot extends Player{
         return "SmartBot " + name;
     }
 
+
+    @Override
+    public void showHand() {
+        System.out.println("Here are the cards in hand: ");
+        for (int i = 0; i < hand.size(); i++) {
+            System.out.println("Card " + (i + 1) + ": " + hand.get(i));
+        }
+    }
+
     @Override
     public Card play(String s) {
     return null;

@@ -2,6 +2,7 @@ package Uno;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.invoke.SwitchPoint;
 import java.util.*;
 import java.io.PrintStream;
 
@@ -12,10 +13,11 @@ public class Game {
     private boolean exit = false;
     private List<Player> players = new ArrayList<>();
     private Carddeck drawDeck = new Carddeck();
-    private DiscardDeck discardDeck= new DiscardDeck();
+    private DiscardDeck discardDeck = new DiscardDeck();
     private int round = 1;
     private int session = 1;
-    private boolean isClockwise = true;
+    private boolean isClockwise = true; // check if the direction has been changed. It should change only once
+    private boolean skipped = false; // the skip card should only make one player skip. Once skipped, it can only be skipped again when another skip card is played
     private int currentPlayerIndex = 0;
     private Player currentPlayer;
     private boolean drawn = false; //avoid the user inputting "draw" twice in a row
@@ -46,7 +48,7 @@ public class Game {
         }
     }
 
-// initialize the game:
+    // initialize the game:
 // generate the drawdeck with 108 cards
 // create 4 players and shuffle the players to pick the first player to start the game
 // 7 cards for each players
@@ -67,9 +69,9 @@ public class Game {
     private void playerLoop() {
         //The game begin with the index 0 unless the first card is the skip or pull2 or pull 4 card.
         //if the current player didn't have to draw 2 or 4 cards, he can play a valid card. Otherwise, he has to draw cards and skip his/her turn.
-        if(!suspend()) {
+        if (!suspend()) {
             currentPlayer = players.get(currentPlayerIndex);
-        }else currentPlayer = nextPlayer();
+        } else currentPlayer = nextPlayer();
 
         if (!ifDrawActionCards()) {
             output.println("**************************************************************");
@@ -79,8 +81,12 @@ public class Game {
             drawn = false;// drawn back to false for the next player
         }
 
-        if(currentPlayer.hand.size()==1){
+        if (currentPlayer.hand.size() == 1) {
             unoNoDeclaredPenalty();
+        }
+
+        if (drawDeck.isEmpty()){
+            discardPileBecomesDrawPile();
         }
 
         currentPlayer = nextPlayer();
@@ -162,7 +168,7 @@ public class Game {
         }
     }
 
-// create hands for all players, each with 7 cards from the draw pile
+    // create hands for all players, each with 7 cards from the draw pile
     private void createHands() {
         for (int i = 0; i < players.size(); i++) {
             for (int j = 0; j < 7; j++) {
@@ -171,9 +177,15 @@ public class Game {
         }
     }
 
-// return the top card on the discard pile
-    private Card getTopCard(){
+    // return the top card on the discard pile
+    private Card getTopCard() {
+
         return discardDeck.topCard();
+    }
+
+    private Card getPreviousCard(){
+        int size = discardDeck.getDeck().size();
+        return discardDeck.getDeck().get(size-2);
     }
 
     //show the last card on the discard pile that player shall refer to.
@@ -211,13 +223,17 @@ public class Game {
             Card currentTopCard = getTopCard();
             Card card = currentPlayer.play(inputAction);
             discardDeck.getNewCard(card);
-            if (!card.color.equals(currentTopCard.color) && card.number != currentTopCard.number) {
-                //check if card is valid. If not valid, the player will take back his last played card from the discard pile and draw a penalty card from the draw pile.
-                currentPlayer.hand.add(getTopCard());
-                discardDeck.removeCard(getTopCard());
-                currentPlayer.hand.add(drawDeck.drawACard());
-                output.println("The move is invalid! You shall take back your card and get a penalty card. Here are your cards in hand now: ");
-                output.println(currentPlayer.hand);
+//            if (!card.color.equals(currentTopCard.color) && card.number != currentTopCard.number) {
+            if (!card.color.equals(colorSelection()) && card.number != currentTopCard.number) {
+                if(card.number !=13 && card.number!=14){
+                    //check if card is valid. If not valid, the player will take back his last played card from the discard pile and draw a penalty card from the draw pile.
+                    currentPlayer.hand.add(getTopCard());
+                    discardDeck.removeCard(getTopCard());
+                    currentPlayer.hand.add(drawDeck.drawACard());
+                    output.println("The move is invalid! You shall take back your card and get a penalty card. Here are your cards in hand now: ");
+                    output.println(currentPlayer.hand);
+                }
+
             }
 
         }
@@ -241,8 +257,8 @@ public class Game {
 
     }
 
-//    here are the methods to update the game state
-    private void updateState(){
+    //    here are the methods to update the game state
+    private void updateState() {
         updateWinnerPoints();
     }
 
@@ -256,25 +272,25 @@ public class Game {
         return false;
     }
 
-//    method to calculate the points gained by the winner in each round
+    //    method to calculate the points gained by the winner in each round
     private void updateWinnerPoints() {
         Player winner = null;
         if (roundOver()) {
             for (Player p : players) {
                 if (p.hand.size() == 0) {
-                  winner = p;
+                    winner = p;
                 }
             }
             System.out.println(winner.name + " has won.");
-           winner.gainPoints(totalCardPoints());
+            winner.gainPoints(totalCardPoints());
         }
     }
 
-//    method to calculate all the card values in the player hands.
-    private int totalCardPoints(){
-        int totalCardPoints=0;
-        for(Player p: players){
-            totalCardPoints+=p.cardValueinHand();
+    //    method to calculate all the card values in the player hands.
+    private int totalCardPoints() {
+        int totalCardPoints = 0;
+        for (Player p : players) {
+            totalCardPoints += p.cardValueinHand();
         }
         return totalCardPoints;
     }
@@ -305,14 +321,14 @@ public class Game {
         }
     }
 
-// print the current state of the game
+    // print the current state of the game
     private void printState() {
-        System.out.println("Session: "+session+ ", Round: "+round);
+        System.out.println("Session: " + session + ", Round: " + round);
         System.out.println(totalCards());
     }
 
 
-// calculate the total number of cards in the game-It should be always 108
+    // calculate the total number of cards in the game-It should be always 108
     private int totalCards() {
         int sumPlayerHands = 0;
         for (int i = 0; i < 4; i++) {
@@ -329,8 +345,8 @@ public class Game {
         //TODO Make logic to check some variable
         // it should be changed when the reverse card is thrown
         if (getTopCard().number == 10) {
-            if(isClockwise)
-                isClockwise= false;
+            if (isClockwise)
+                isClockwise = false;
             else isClockwise = true;
         }
         return isClockwise;
@@ -342,47 +358,129 @@ public class Game {
         boolean drawAction = false;
         int numberOfCardToDraw = 0;
         if (getTopCard().number == 12 || getTopCard().number == 14) {
-            numberOfCardToDraw = getTopCard().number - 10;// either draw 2 cards or 4 cards
-                currentPlayer.hand.addAll(Arrays.asList(drawDeck.drawACard(numberOfCardToDraw)));
-                return true;
+//            numberOfCardToDraw = getTopCard().number - 10;// either draw 2 cards or 4 cards
+//            currentPlayer.hand.addAll(Arrays.asList(drawDeck.drawCards(numberOfCardToDraw)));
+            return true;
         }
         return false;
     }
-// check if the draw4 card turns up at the beginning of the game. if yes, the card will be put back to the draw pile and the draw pile will be reshuffled.
-    private void checkIfDraw4TurnUpAtTheBeginning(){
+
+    private void draw2Penalty(){
+        if (getTopCard().number == 12){
+            currentPlayer.hand.addAll(Arrays.asList(drawDeck.drawCards(2)));
+        }
+    }
+
+    private void draw4Penalty(){
         if(getTopCard().number == 14){
+            if(!cheated()){
+                currentPlayer.hand.addAll(Arrays.asList(drawDeck.drawCards(6)));
+            }else players.get(currentPlayerIndex-1).hand.addAll(Arrays.asList(drawDeck.drawCards(4)));
+        }
+    }
+
+
+    // check if the draw4 card turns up at the beginning of the game. if yes, the card will be put back to the draw pile and the draw pile will be reshuffled.
+    private void checkIfDraw4TurnUpAtTheBeginning() {
+        if (getTopCard().number == 14) {
             drawDeck.addCard(discardDeck.drawACard());
             drawDeck.shuffle();
             discardDeck.getNewCard(drawDeck.drawACard());
+        }
+    }
+//    requirement 31: when the pull 4 played, the next player can verify if the current player has cheated or not. The current player needs to show his hand
+    private boolean cheated() {
+        if (getTopCard().number == 14) {
+            output.println("Would you like to challenge, " + nextPlayer().name + "?" + "Please enter 'Y' or 'N'.");
+            String changeChoice = input.next();
+            if (changeChoice.equalsIgnoreCase("Y")) {
+                currentPlayer.showHand();
+                for (Card c : currentPlayer.hand) {
+                    if (c.number == getPreviousCard().number || c.color == getPreviousCard().color) {
+                        return true;
+                    }
+                }
+
+            }
+        }return false;
+    }
+
+//    In case of challenge, if the current player has cheated, he should draw 4 cards. If not, the next player will draw 6 cards.
+    private void fineInCaseOfChallenge(){
+        if(cheated()){
+
         }
     }
 
 
     //if the draw pile runs out, the discard pile will be shuffled and become the new draw pile. The first card will be placed on the discard pile
     private void discardPileBecomesDrawPile() {
-        if (drawDeck.isEmpty()) {
+
             drawDeck.deckSwap(discardDeck.getDeck());
+
+    }
+
+    //in case of ta suspend card, the current player's turn will be skipped
+    private boolean suspend() {
+        if (getTopCard().number == 11) {
+            if (!skipped) {
+                System.out.println("Oops, you have to skip your turn because of the suspend card!");
+                skipped = true;
+            } else skipped = false;
+
+        }
+        return skipped;
+    }
+
+    //    check if the player forgets to declare UNO in time. If not, he/she will get a penalty card
+    private void unoNoDeclaredPenalty() {
+        boolean unoNoDeclaredPenalty = false;
+        if (currentPlayer.unoDeclare()) {
+            unoNoDeclaredPenalty = false;
+        }
+        unoNoDeclaredPenalty = true;
+        if (unoNoDeclaredPenalty) {
+            currentPlayer.hand.add(drawDeck.drawACard());
         }
     }
 
-//in case of ta suspend card, the current player's turn will be skipped
-    private boolean suspend(){
-        if(getTopCard().number==11) {
-            System.out.println("Oops, you have to skip your turn because of the suspend card!");
-            return true;
+// this method decide the color that the game rule will take to judge if the played card is valid or not.
+    private Color colorSelection() {
+//        output.println("This is color selection function: top card number, "+getTopCard().number);
+        Color colorSelected = null;
+        boolean invalidColor = false;
+        if (getTopCard().number != 13 && getTopCard().number != 14) {
+            return (Color) getTopCard().color;
         }
-        return false;
-    }
-
-//    check if the player forgets to declare UNO in time. If not, he/she will get a penalty card
-    private void unoNoDeclaredPenalty(){
-        boolean unoNoDeclaredPenalty=false;
-      if(currentPlayer.unoDeclare()){
-          unoNoDeclaredPenalty = false;
-      }unoNoDeclaredPenalty = true;
-      if(unoNoDeclaredPenalty){
-          currentPlayer.hand.add(drawDeck.drawACard());
-      }
+        else {
+            do {
+                output.println("You may select a different color to play: 'R' for red, 'B' for blue, 'G' for green and 'Y' for yellow");
+                Scanner input = new Scanner(System.in);
+                String c = input.next();
+                if (c.equalsIgnoreCase("R")) {
+                    colorSelected = Color.RED;
+                    output.println("Color changed to red");
+                    invalidColor = false;
+                } else if (c.equalsIgnoreCase("B")) {
+                    colorSelected = Color.BLUE;
+                    output.println("Color changed to blue");
+                    invalidColor = false;
+                } else if (c.equalsIgnoreCase("G")) {
+                    colorSelected = Color.GREEN;
+                    output.println("Color changed to green");
+                    invalidColor = false;
+                } else if (c.equalsIgnoreCase("Y")) {
+                    colorSelected = Color.YELLOW;
+                    output.println("Color changed to yellow");
+                    invalidColor = false;
+                } else {
+                    output.println("The input color is not valid, please select a valid color!");
+                    invalidColor = true;
+                }
+//                output.println("Color selected" + colorSelected + ", invalid color: " + invalidColor);
+            } while (invalidColor);
+        }
+        return colorSelected;
     }
 
 }

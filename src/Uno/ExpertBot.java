@@ -7,6 +7,14 @@ public class ExpertBot extends Player {
     }
 
     @Override
+    public void showHand() {
+        System.out.println("Here are the cards in hand: ");
+        for (int i = 0; i < hand.size(); i++) {
+            System.out.println("Card " + (i + 1) + ": " + hand.get(i));
+        }
+    }
+
+    @Override
     public String toString() {
         return "ExpertBot " + name;
     }

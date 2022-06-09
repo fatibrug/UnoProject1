@@ -34,7 +34,7 @@ public abstract class Player {
         points += gainedPoints;
     }
 
-
+    public abstract void showHand();
     public abstract boolean unoDeclare();//if the player declares uno or not
     public abstract String inputAction();
     public abstract Card play(String s);

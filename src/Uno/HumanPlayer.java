@@ -28,12 +28,15 @@ public class HumanPlayer extends Player {
     }
 
     //show the player what cards he/she has in hand
+    @Override
     public void showHand() {
-        System.out.println("Here are your cards in hand: ");
+        System.out.println("Here are the cards in hand: ");
         for (int i = 0; i < hand.size(); i++) {
             System.out.println("Card " + (i + 1) + ": " + hand.get(i));
         }
     }
+
+
 
     public String inputAction() {
         showHand();
@@ -76,6 +79,7 @@ public class HumanPlayer extends Player {
         super.gainPoints(gainedPoints);
     }
 
+//    ask the player if they want to decalre "uno"
     public boolean unoDeclare(){
         System.out.println("If you have only one card left, please enter 'uno'! ");
         Scanner input = new Scanner(System.in);

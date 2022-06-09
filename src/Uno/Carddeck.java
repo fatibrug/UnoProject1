@@ -20,7 +20,7 @@ public class Carddeck {
         return deck.remove(deck.size()-1);
     }
 
-    public Card[] drawACard(int count){
+    public Card[] drawCards(int count){
         Card[] cardsToDraw = new Card[count];
         for(int i=0; i<count; i++){
             cardsToDraw[i]= drawACard();
