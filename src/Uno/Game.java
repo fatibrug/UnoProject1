@@ -21,6 +21,7 @@ public class Game {
     private int currentPlayerIndex = 0;
     private Player currentPlayer;
     private boolean drawn = false; //avoid the user inputting "draw" twice in a row
+    private boolean challenged = false;// when pull 4 card played, only one challenge chance
     private HashMap<String, Integer> playerPoint;
 
     public Game(Scanner input, PrintStream output) {
@@ -355,9 +356,15 @@ public class Game {
     //the method below check if a pull 2 or draw 4 cards is on the discard pile. If yes, the current player should draw 2 or 4 cards
     //the boolean return value shall be used in the player loop method
     private boolean ifDrawActionCards() {
-        boolean drawAction = false;
-        int numberOfCardToDraw = 0;
+//        boolean drawAction = false;
+//        int numberOfCardToDraw = 0;
         if (getTopCard().number == 12 || getTopCard().number == 14) {
+            if(getTopCard().number == 12){
+                draw2Penalty();
+            }
+            if(getTopCard().number == 14){
+                draw4Penalty();
+            }
 //            numberOfCardToDraw = getTopCard().number - 10;// either draw 2 cards or 4 cards
 //            currentPlayer.hand.addAll(Arrays.asList(drawDeck.drawCards(numberOfCardToDraw)));
             return true;
@@ -371,13 +378,12 @@ public class Game {
         }
     }
 
+    //    In case of challenge, if the current player has cheated, he should draw 4 cards. If not, the next player will draw 6 cards.
     private void draw4Penalty(){
-        if(getTopCard().number == 14){
             if(!cheated()){
                 currentPlayer.hand.addAll(Arrays.asList(drawDeck.drawCards(6)));
             }else players.get(currentPlayerIndex-1).hand.addAll(Arrays.asList(drawDeck.drawCards(4)));
         }
-    }
 
 
     // check if the draw4 card turns up at the beginning of the game. if yes, the card will be put back to the draw pile and the draw pile will be reshuffled.
@@ -388,11 +394,13 @@ public class Game {
             discardDeck.getNewCard(drawDeck.drawACard());
         }
     }
+
 //    requirement 31: when the pull 4 played, the next player can verify if the current player has cheated or not. The current player needs to show his hand
     private boolean cheated() {
-        if (getTopCard().number == 14) {
-            output.println("Would you like to challenge, " + nextPlayer().name + "?" + "Please enter 'Y' or 'N'.");
+        if (getTopCard().number == 14 && !challenged) {
+            output.println("Would you like to challenge, " + currentPlayer.name + "?" + "Please enter 'Y' or 'N'.");
             String changeChoice = input.next();
+            challenged = true;
             if (changeChoice.equalsIgnoreCase("Y")) {
                 currentPlayer.showHand();
                 for (Card c : currentPlayer.hand) {
@@ -403,13 +411,6 @@ public class Game {
 
             }
         }return false;
-    }
-
-//    In case of challenge, if the current player has cheated, he should draw 4 cards. If not, the next player will draw 6 cards.
-    private void fineInCaseOfChallenge(){
-        if(cheated()){
-
-        }
     }
 
 
