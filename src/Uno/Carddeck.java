@@ -20,14 +20,6 @@ public class Carddeck {
         return deck.remove(deck.size()-1);
     }
 
-    public Card[] drawCards(int count){
-        Card[] cardsToDraw = new Card[count];
-        for(int i=0; i<count; i++){
-            cardsToDraw[i]= drawACard();
-        }
-        return cardsToDraw;
-    }
-
     public void generateDeck(){
        Enum[] e= new Enum[]{Color.RED,Color.YELLOW,Color.BLUE,Color.GREEN};
 

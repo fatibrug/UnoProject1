@@ -16,7 +16,7 @@ public class Bot extends Player{
 
     @Override
     public void showHand() {
-        System.out.println("Here are the cards in hand: ");
+        System.out.println("Player " + name + " : Here are the cards in hand: ");
         for (int i = 0; i < hand.size(); i++) {
             System.out.println("Card " + (i + 1) + ": " + hand.get(i));
         }
@@ -24,10 +24,9 @@ public class Bot extends Player{
 
     @Override
     public Card play(String s) {
-        Card discardedCard = hand.get(0);
-        System.out.println("Card played: "+discardedCard);
-        hand.remove(0);
-        return discardedCard;
+        int cardIndex = Integer.parseInt(s);
+        System.out.println("Card played: " + hand.get(cardIndex-1));
+        return hand.remove(cardIndex-1);
     }
 
     @Override
@@ -41,9 +40,7 @@ public class Bot extends Player{
     }
 
     @Override
-    public String inputAction() {
-        return "0";
-    }
+    public String inputAction() {return "1";}
 
     @Override
     public boolean unoDeclare() {

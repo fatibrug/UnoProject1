@@ -1,32 +1,24 @@
 package Uno;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SmartBot extends Player{
-
-    public SmartBot(String name) {
-        super(name);
-    }
-
-    @Override
-    public String toString() {
-        return "SmartBot " + name;
-    }
-
-
-    @Override
-    public void showHand() {
-        System.out.println("Player " + name + " : Here are the cards in hand: ");
-        for (int i = 0; i < hand.size(); i++) {
-            System.out.println("Card " + (i + 1) + ": " + hand.get(i));
-        }
-    }
-
-    public String smartBotChoosesColor(){
+public class test {
+    public static void main(String[] args) {
+        int i= (int)Math.floor(Math.random()*4);
+        System.out.println(i);
         HashMap<String, Integer> colorCount = new HashMap<>();
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.add(new Card(10, Color.YELLOW));
+        cards.add(new Card(10, Color.RED));
+        cards.add(new Card(9, Color.YELLOW));
+        cards.add( new Card(10, Color.BLUE));
+        cards.add(new Card(10, Color.BLUE));
+        cards.add(new Card(10, Color.GREEN));
+        cards.add(new Card(10, Color.YELLOW));
         String returnColorCode = "";
-        for(Card c: hand){
+        for(Card c: cards){
             String cardColor = c.color.name();
             if(cardColor == "RED"){
                 if(colorCount.containsKey("RED")){
@@ -56,33 +48,9 @@ public class SmartBot extends Player{
                 returnColorCode = entry.getKey();
             }
         }
-        return returnColorCode;
+        System.out.println( returnColorCode);
+
     }
 
-    @Override
-    public Card play(String s) {
-        int cardIndex = Integer.parseInt(s);
-        System.out.println("Card played: " + hand.get(cardIndex-1));
-        return hand.remove(cardIndex-1);
-    }
 
-    @Override
-    public String inputAction() {
-        return "0";
-    }
-
-    @Override
-    public int cardValueinHand() {
-        return super.cardValueinHand();
-    }
-
-    @Override
-    public void gainPoints(int gainedPoints) {
-        super.gainPoints(gainedPoints);
-    }
-
-    @Override
-    public boolean unoDeclare() {
-        return true;
-    }
 }
