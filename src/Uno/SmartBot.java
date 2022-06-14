@@ -1,9 +1,11 @@
 package Uno;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SmartBot extends Player{
+    private boolean hasDrawn = false;
 
     public SmartBot(String name) {
         super(name);
@@ -60,16 +62,58 @@ public class SmartBot extends Player{
     }
 
     @Override
-    public Card play(String s) {
-        int cardIndex = Integer.parseInt(s);
-        System.out.println("Card played: " + hand.get(cardIndex-1));
-        return hand.remove(cardIndex-1);
+    public Card play(String indexStr) {
+        int cardIndex = 0;
+        cardIndex = Integer.parseInt(indexStr);
+        System.out.println("Card played: " + hand.get(cardIndex));
+        return hand.remove(cardIndex);
+
     }
 
     @Override
-    public String inputAction() {
-        return "0";
+    public String inputAction(Card topCard, Color currentColor) {
+        showHand();
+        ArrayList<Card> validCards = new ArrayList<>();
+        for (Card c : hand) {
+            if (c.number == topCard.number || c.color.name().equals(currentColor.name())) {
+                validCards.add(c);
+            }
+        }
+        if (validCards.isEmpty()) {
+            if (!hasDrawn) {
+                hasDrawn = true;
+                return "draw";
+            } else {
+                hasDrawn = false;
+                return "skip";
+            }
+        } else if (validCards.size() == 1 && validCards.get(0).number == 14) {
+            int indexOf14 = 0;
+            for (int i = 0; i < hand.size(); i++) {
+                if (hand.get(i).number == 14) {
+                    indexOf14 = i;
+                }
+            }
+            return String.valueOf(indexOf14);
+        } else {
+            Card bestCardToPlay = validCards.get(0);
+            for (Card c : validCards) {
+                if (c.number != 14) {
+                    if (c.number > bestCardToPlay.number) {
+                        bestCardToPlay = c;
+                    }
+                }
+            }
+            int indexOfBestCard = 0;
+            for (int i = 0; i < hand.size(); i++) {
+                if (hand.get(i).number == bestCardToPlay.number && hand.get(i).color == bestCardToPlay.color) {
+                    indexOfBestCard = i;
+                }
+            }
+            return String.valueOf(indexOfBestCard);
+        }
     }
+
 
     @Override
     public int cardValueinHand() {

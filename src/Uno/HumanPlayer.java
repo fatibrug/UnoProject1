@@ -37,8 +37,7 @@ public class HumanPlayer extends Player {
     }
 
 
-
-    public String inputAction() {
+    public String inputAction(Card topCard, Color currentColor) {
         showHand();
         boolean inputError = false;
         Scanner input = new Scanner(System.in);

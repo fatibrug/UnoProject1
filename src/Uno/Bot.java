@@ -40,7 +40,7 @@ public class Bot extends Player{
     }
 
     @Override
-    public String inputAction() {return "1";}
+    public String inputAction(Card topCard, Color currentColor) {return "1";}
 
     @Override
     public boolean unoDeclare() {

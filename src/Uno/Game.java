@@ -71,6 +71,7 @@ public class Game {
         createHands();
         discardDeck.getNewCard(drawDeck.drawACard());
         currentColor = (Color) getTopCard().color;
+        showLastDiscardedCard();
         previousColor = currentColor;
         checkIfDraw4TurnUpAtTheBeginning();
 
@@ -105,7 +106,8 @@ public class Game {
                         nextPlayer().hand.add(drawDeck.drawACard());
 
                     }
-                    currentPlayer.showHand();
+//                    currentPlayer.showHand();
+                    nextPlayer().showHand();
                 }
                 if(isColorSelected) {
                     currentPlayer = nextPlayer();
@@ -130,9 +132,7 @@ public class Game {
 //                isColorSelected = false;
             }
 //            currentPlayer = nextPlayer();
-
         }
-
                 output.println("**************************************************************");
                 System.out.println("It is your turn to play, " + currentPlayer.name + "!");
                 showLastDiscardedCard();
@@ -258,7 +258,7 @@ public class Game {
 
     //read user input of the current user before the play method. The bot user input is null.
     private void readUserInput() {
-        String inputAction = currentPlayer.inputAction();
+        String inputAction = currentPlayer.inputAction(getTopCard(), currentColor);
         if (inputAction.equals("draw")) {
             if (!drawn) {
                 // if the input action id "draw" , the current player draws a card from the drawPile and add to the hand of the current player if he/she has not drawn a card before
@@ -277,7 +277,7 @@ public class Game {
             //the player is not allowed to choose skip input if he has not drawn a card when he has no valid card to play
             if (!drawn) {
                 output.println("Invalid input, you cannot skip. Please choose 'd' to draw a card/cards if you have no valid card to play");
-            } else {
+            } else { //
                 // if skip, then the next player becomes the current player
                 output.println("I have no valid card to play and will skip!");
                 isSkippedOrInvalid = true;
@@ -441,38 +441,6 @@ public class Game {
         return isClockwise;
     }
 
-    //the method below check if a pull 2 or draw 4 cards is on the discard pile. If yes, the current player should draw 2 or 4 cards
-    //the boolean return value shall be used in the player loop method
-//    private boolean ifDrawActionCards() {
-//        boolean drawAction = false;
-//        int numberOfCardToDraw = 0;
-//        if (getTopCard().number == 12 || getTopCard().number == 14 || getTopCard().number == 13) {
-//            if(getTopCard().number == 13) {
-//                colorSelection();
-//            }
-//
-//            if (getTopCard().number == 12) {
-//                draw2Penalty();
-//            }
-//            if (getTopCard().number == 14) {
-//                colorSelection();
-//                challenged();
-//                if(isChallenged)
-//                    draw4Penalty();
-//                else{
-//                    for (int i = 0; i < 4; i++) {
-//                        currentPlayer.hand.add(drawDeck.drawACard());
-//
-//                    }
-//                    currentPlayer.showHand();
-//                }
-//            }
-////            numberOfCardToDraw = getTopCard().number - 10;// either draw 2 cards or 4 cards
-////            currentPlayer.hand.addAll(Arrays.asList(drawDeck.drawCards(numberOfCardToDraw)));
-//            return true;
-//        }
-//        return false;
-//    }
 
 
     private void draw2Penalty() {
@@ -514,23 +482,14 @@ public class Game {
 
     //    requirement 31: when the pull 4 played, the next player can verify if the current player has cheated or not. The current player needs to show his hand
     private void cheated() {
-//        if (getTopCard().number == 14 && !isChallenged) {
-//            output.println("Would you like to challenge, " + currentPlayer.name + "? " + "Please enter 'Y' or 'N'.");
-//            String changeChoice = input.next();
-//
-//            if (changeChoice.equalsIgnoreCase("Y")) {
-//                isChallenged = true;
                 boolean checkCheating = false;
-
                 previousPlayer().showHand();
                 for (Card c : previousPlayer().hand) {
                     if (c.number == getPreviousCard().number || c.color.name().equals(previousColor.name())) {
                         checkCheating = true;
                     }
                 }
-//
-//            }
-//        }
+
         if(checkCheating)
             hasCheated = true;
         else
@@ -580,8 +539,8 @@ public class Game {
         if (currentPlayer.unoDeclare()) {
             unoNoDeclaredPenalty = false;
         }
-        unoNoDeclaredPenalty = true;
-        if (unoNoDeclaredPenalty) {
+        else unoNoDeclaredPenalty = true;
+       if (unoNoDeclaredPenalty) {
             currentPlayer.hand.add(drawDeck.drawACard());
         }
     }

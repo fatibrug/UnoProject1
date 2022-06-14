@@ -36,7 +36,7 @@ public abstract class Player {
 
     public abstract void showHand();
     public abstract boolean unoDeclare();//if the player declares uno or not
-    public abstract String inputAction();
+    public abstract String inputAction(Card topCard, Color currentColor);
     public abstract Card play(String s);
 
 

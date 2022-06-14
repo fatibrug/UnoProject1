@@ -25,7 +25,7 @@ public class ExpertBot extends Player {
     }
 
     @Override
-    public String inputAction() {
+    public String inputAction(Card topCard, Color currentColor) {
         return null;
     }
 
