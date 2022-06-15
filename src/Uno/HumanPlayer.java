@@ -37,6 +37,10 @@ public class HumanPlayer extends Player {
         }
     }
 
+    @Override
+    public void resetBotHasDrawn() {
+
+    }
 
     public String inputAction(Card topCard, Color currentColor) {
         showHand();

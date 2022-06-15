@@ -246,6 +246,9 @@ public class Game {
     //read user input of the current user before the play method. The bot user input is null.
     private void readUserInput() {
         String inputAction = currentPlayer.inputAction(getTopCard(), currentColor);
+        if(currentPlayer.getClass() == SmartBot.class){
+            currentPlayer.resetBotHasDrawn();
+        }
         if (inputAction.equals("draw")) {
             if (!drawn) {
                 // if the input action id "draw" , the current player draws a card from the drawPile and add to the hand of the current player if he/she has not drawn a card before

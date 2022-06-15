@@ -31,6 +31,11 @@ public class Bot extends Player{
     }
 
     @Override
+    public void resetBotHasDrawn() {
+
+    }
+
+    @Override
     public int cardValueinHand() {
         return super.cardValueinHand();
     }

@@ -40,4 +40,5 @@ public abstract class Player {
     public abstract Card play(String s);
 
 
+    public abstract void resetBotHasDrawn();
 }

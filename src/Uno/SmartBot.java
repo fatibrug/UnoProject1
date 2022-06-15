@@ -71,6 +71,11 @@ public class SmartBot extends Player{
     }
 
     @Override
+    public void resetBotHasDrawn() {
+        hasDrawn = false;
+    }
+
+    @Override
     public String inputAction(Card topCard, Color currentColor) {
         showHand();
         ArrayList<Card> validCards = new ArrayList<>();
@@ -83,10 +88,11 @@ public class SmartBot extends Player{
             if (!hasDrawn) {
                 hasDrawn = true;
                 return "draw";
-            } else {
+            } else{
                 hasDrawn = false;
                 return "skip";
             }
+
         } else if (validCards.size() == 1 && (validCards.get(0).number == 14 ||validCards.get(0).number == 13)) {
             int indexOf14Or13 = 0;
             for (int i = 0; i < hand.size(); i++) {
@@ -112,6 +118,7 @@ public class SmartBot extends Player{
             }
             return String.valueOf(indexOfBestCard);
         }
+
     }
 
 

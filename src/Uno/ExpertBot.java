@@ -15,6 +15,11 @@ public class ExpertBot extends Player {
     }
 
     @Override
+    public void resetBotHasDrawn() {
+
+    }
+
+    @Override
     public String toString() {
         return "ExpertBot " + name;
     }
