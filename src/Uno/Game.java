@@ -270,7 +270,7 @@ public class Game {
                 output.println("I have no valid card to play and will skip!");
                 isSkippedOrInvalid = true;
             }
-        } else if (inputAction.chars().allMatch(Character::isDigit) && Integer.parseInt(inputAction) > 0 && Integer.parseInt(inputAction) <= currentPlayer.hand.size()) {
+        } else if (inputAction.chars().allMatch(Character::isDigit) && Integer.parseInt(inputAction) >= 0 && Integer.parseInt(inputAction) <= currentPlayer.hand.size()) {
             // the default case is when a valid index number is given as input, then play method will be called.
             //the return value of the play method will be the card to be added to the discard pile
             isSkippedOrInvalid = false;

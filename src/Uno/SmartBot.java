@@ -51,8 +51,8 @@ public class SmartBot extends Player{
                 } else colorCount.put("B", 1);
             }
         }
+        int max= 0;
         for(Map.Entry<String, Integer> entry: colorCount.entrySet()){
-            int max= 0;
             if(entry.getValue()>max){
                 max = entry.getValue();
                 returnColorCode = entry.getKey();
@@ -63,12 +63,11 @@ public class SmartBot extends Player{
 
     @Override
     public Card play(String indexStr) {
-        int cardIndex = 0;
-        cardIndex = Integer.parseInt(indexStr);
+//        int cardIndex = 0;
+        int cardIndex = Integer.parseInt(indexStr);
         System.out.println("*************************************************************");
         System.out.println("Card played: " + hand.get(cardIndex));
         return hand.remove(cardIndex);
-
     }
 
     @Override
@@ -97,7 +96,7 @@ public class SmartBot extends Player{
             }
             return String.valueOf(indexOf14Or13);
         } else {
-            Card bestCardToPlay = validCards.get(0);
+            Card bestCardToPlay = new Card(0, Color.BLACK);
             for (Card c : validCards) {
                 if (c.number != 14) {
                     if (c.number >= bestCardToPlay.number) {
