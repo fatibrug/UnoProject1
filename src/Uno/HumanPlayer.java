@@ -23,6 +23,7 @@ public class HumanPlayer extends Player {
     public Card play(String indexStr) {
         int cardIndex = 0;
         cardIndex = Integer.parseInt(indexStr);
+        System.out.println("*************************************************************");
         System.out.println("Card played: " + hand.get(cardIndex - 1));
         return hand.remove(cardIndex - 1);
     }

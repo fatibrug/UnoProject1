@@ -65,6 +65,7 @@ public class SmartBot extends Player{
     public Card play(String indexStr) {
         int cardIndex = 0;
         cardIndex = Integer.parseInt(indexStr);
+        System.out.println("*************************************************************");
         System.out.println("Card played: " + hand.get(cardIndex));
         return hand.remove(cardIndex);
 
@@ -75,7 +76,7 @@ public class SmartBot extends Player{
         showHand();
         ArrayList<Card> validCards = new ArrayList<>();
         for (Card c : hand) {
-            if (c.number == topCard.number || c.color.name().equals(currentColor.name())) {
+            if (c.number == topCard.number || c.color.name().equals(currentColor.name())|| c.number == 13 ||c.number ==14) {
                 validCards.add(c);
             }
         }
@@ -87,19 +88,19 @@ public class SmartBot extends Player{
                 hasDrawn = false;
                 return "skip";
             }
-        } else if (validCards.size() == 1 && validCards.get(0).number == 14) {
-            int indexOf14 = 0;
+        } else if (validCards.size() == 1 && (validCards.get(0).number == 14 ||validCards.get(0).number == 13)) {
+            int indexOf14Or13 = 0;
             for (int i = 0; i < hand.size(); i++) {
-                if (hand.get(i).number == 14) {
-                    indexOf14 = i;
+                if (hand.get(i).number == 14 || hand.get(i).number == 13) {
+                    indexOf14Or13 = i;
                 }
             }
-            return String.valueOf(indexOf14);
+            return String.valueOf(indexOf14Or13);
         } else {
             Card bestCardToPlay = validCards.get(0);
             for (Card c : validCards) {
                 if (c.number != 14) {
-                    if (c.number > bestCardToPlay.number) {
+                    if (c.number >= bestCardToPlay.number) {
                         bestCardToPlay = c;
                     }
                 }

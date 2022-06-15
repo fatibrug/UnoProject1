@@ -25,6 +25,7 @@ public class Bot extends Player{
     @Override
     public Card play(String s) {
         int cardIndex = Integer.parseInt(s);
+        System.out.println("*************************************************************");
         System.out.println("Card played: " + hand.get(cardIndex-1));
         return hand.remove(cardIndex-1);
     }
@@ -44,6 +45,7 @@ public class Bot extends Player{
 
     @Override
     public boolean unoDeclare() {
-        return false;
+        boolean[] unoDeclareDecision = new boolean[]{true, false};
+        return unoDeclareDecision[(int)Math.floor(Math.random()*2)];
     }
 }
