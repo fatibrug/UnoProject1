@@ -28,30 +28,33 @@ public class SmartBot extends Player{
     public String smartBotChoosesColor(){
         HashMap<String, Integer> colorCount = new HashMap<>();
         String returnColorCode = "";
+        String cardColor = "";
+
         for(Card c: hand){
-            String cardColor = c.color.name();
-            if(cardColor == "RED"){
-                if(colorCount.containsKey("RED")){
-                    colorCount.put("R", colorCount.get("RED" + 1));
+            cardColor = c.color.name();
+            if(cardColor.equals("RED")){
+                if(colorCount.containsKey("R")){
+                    colorCount.put("R", colorCount.get("R") + 1);
                 } else colorCount.put("R", 1);
             }
-            else if(cardColor == "GREEN"){
-                if(colorCount.containsKey("GREEN")){
-                    colorCount.put("G", colorCount.get("GREEN" + 1));
+            else if(cardColor.equals("GREEN")){
+                if(colorCount.containsKey("G")){
+                    colorCount.put("G", colorCount.get("G") + 1);
                 } else colorCount.put("G", 1);
             }
-            else if(cardColor == "YELLOW"){
-                if(colorCount.containsKey("YELLOW")){
-                    colorCount.put("Y", colorCount.get("YELLOW" + 1));
+            else if(cardColor.equals("YELLOW")){
+                if(colorCount.containsKey("Y")){
+                    colorCount.put("Y", colorCount.get("Y") + 1);
                 } else colorCount.put("Y", 1);
             }
-            else if(cardColor == "BLUE"){
-                if(colorCount.containsKey("BLUE")){
-                    colorCount.put("B", colorCount.get("BLUE" + 1));
+            else if(cardColor.equals("BLUE")){
+                if(colorCount.containsKey("B")){
+                    colorCount.put("B", colorCount.get("B") + 1);
                 } else colorCount.put("B", 1);
             }
         }
         int max= 0;
+
         for(Map.Entry<String, Integer> entry: colorCount.entrySet()){
             if(entry.getValue()>max){
                 max = entry.getValue();
