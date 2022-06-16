@@ -10,7 +10,6 @@ public class Game {
 
     private final Scanner input;
     private final PrintStream output;
-    private boolean exit = false;
     private List<Player> players = new ArrayList<>();
     private Carddeck drawDeck = new Carddeck();
     private DiscardDeck discardDeck = new DiscardDeck();
@@ -18,15 +17,12 @@ public class Game {
     private int session = 1;
     private boolean isClockwise = true; // check if the direction has been changed. It should change only once
     private boolean skipped = false; // the skip card should only make one player skip. Once skipped, it can only be skipped again when another skip card is played
-    private int currentPlayerIndex = 0;
     private Player currentPlayer;
     private boolean drawn = false; //avoid the user inputting "draw" twice in a row
     private boolean isChallenged = false;// when pull 4 card played, only one challenge chance
-    //    private boolean hasCheated = false;
-    private boolean isColorSelected = false;
     private boolean isSkippedOrInvalid = false;
     private boolean pulled2 = false;
-    private HashMap<String, Integer> playerPoint;
+    private HashMap<String, Integer> playerPoint; // will integrate later with datenbank
     private Color currentColor = null;
     private Color previousColor = null;
 
@@ -89,45 +85,35 @@ public class Game {
         if (currentPlayer.hand.size() == 1) {
             checkUnoNoDeclaredPenalty();
         }
-        if(!isSkippedOrInvalid)
+        if (!isSkippedOrInvalid)
             actionCardCheck();
 
         drawn = false;// drawn back to false for the next player
         skipped = false;
-
-//        if (getTopCard().number != 13 && getTopCard().number != 14) {
-            currentPlayer = nextPlayer();
-//            isColorSelected = false;
-//        }
+        currentPlayer = nextPlayer();
 
 
     }
 
     private void actionCardCheck() {
-    boolean cheated = false;
+        boolean cheated = false;
         if (getTopCard().number == 10) {
             changePlayerDirection();
         } else if (getTopCard().number == 11) { // SUSPEND
             suspend();
-//         currentPlayer = nextPlayer();
 
         } else if (getTopCard().number == 14) { // +4
-//            if (!isSkippedOrInvalid) {
-//                colorSelection();
-//            }
-
             colorSelection();
             challenged();
             if (isChallenged) {
                 cheated = challengePenalty();
-                if(!cheated) //If the current player did not cheat, the next player draw 6 cards and pass his turn
-                        currentPlayer = nextPlayer();
+                if (!cheated) //If the current player did not cheat, the next player draw 6 cards and pass his turn
+                    currentPlayer = nextPlayer();
                 isChallenged = false;
             } else {
                 draw4Penalty();
                 currentPlayer = nextPlayer();
             }
-
 
         } else if (getTopCard().number == 12) { // +2
             draw2Penalty();
@@ -303,7 +289,7 @@ public class Game {
                     }
                 } else currentColor = (Color) card.color;
             }
-        }while(!completed);
+        } while (!completed);
     }
 
 
@@ -560,7 +546,6 @@ public class Game {
 
     // this method decide the color that the game rule will take to judge if the played card is valid or not.
     private void colorSelection() {
-//        output.println("This is color selection function: top card number, "+getTopCard().number);
 
         boolean invalidColor = false;
         if (getTopCard().number != 13 && getTopCard().number != 14) {
@@ -581,12 +566,9 @@ public class Game {
                 }
 
                 if (c.equalsIgnoreCase("R")) {
-//                    if (discardDeck.deck.size() == 1 || getPreviousCard().number == 13 || getPreviousCard().number == 14) {// change the conditions here
-//                        previousColor = currentColor;
-//                    } else
-                    if(getPreviousCard().color.name().equals("BLACK"))
-                            previousColor = currentColor;
-                        else previousColor = (Color) getPreviousCard().color;
+                    if (getPreviousCard().color.name().equals("BLACK"))
+                        previousColor = currentColor;
+                    else previousColor = (Color) getPreviousCard().color;
 
                     currentColor = Color.RED;
 
@@ -595,10 +577,9 @@ public class Game {
                     }
                     output.println("Color changed to red / previous color was " + previousColor);
                     invalidColor = false;
-//                    isColorSelected = true;
                 } else if (c.equalsIgnoreCase("B")) {
 
-                    if(getPreviousCard().color.name().equals("BLACK"))
+                    if (getPreviousCard().color.name().equals("BLACK"))
                         previousColor = currentColor;
                     else previousColor = (Color) getPreviousCard().color;
 
@@ -608,9 +589,8 @@ public class Game {
                     }
                     output.println("Color changed to blue / previous color was " + previousColor);
                     invalidColor = false;
-//                    isColorSelected = true;
                 } else if (c.equalsIgnoreCase("G")) {
-                    if(getPreviousCard().color.name().equals("BLACK"))
+                    if (getPreviousCard().color.name().equals("BLACK"))
                         previousColor = currentColor;
                     else previousColor = (Color) getPreviousCard().color;
 
@@ -620,9 +600,8 @@ public class Game {
                     }
                     output.println("Color changed to green / previous color was " + previousColor);
                     invalidColor = false;
-//                    isColorSelected = true;
                 } else if (c.equalsIgnoreCase("Y")) {
-                    if(getPreviousCard().color.name().equals("BLACK"))
+                    if (getPreviousCard().color.name().equals("BLACK"))
                         previousColor = currentColor;
                     else previousColor = (Color) getPreviousCard().color;
                     currentColor = Color.YELLOW;
@@ -631,7 +610,7 @@ public class Game {
                     }
                     output.println("Color changed to yellow / previous color was " + previousColor);
                     invalidColor = false;
-//                    isColorSelected = true;
+
                 } else {
                     output.println("The input color is not valid, please select a valid color!");
                     invalidColor = true;
