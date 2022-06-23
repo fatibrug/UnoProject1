@@ -77,7 +77,6 @@ public class Game {
     //The game player loop: It starts from the 0 position of the player list and loop with the nextPlayer method
     private void playerLoop() {
 
-
         output.println("**************************************************************");
         System.out.println("It is your turn to play, " + currentPlayer.name + "!");
         showLastDiscardedCard();
@@ -488,30 +487,41 @@ public class Game {
         return false;
     }
 
-
     private void challenged() {
-        if (getTopCard().number == 14 && !isChallenged) {
-            String challengeChoice = "";
-            String[] challengeDecision = new String[]{"Y", "N"};
+        if (!isChallenged) {
             Player challengerPlayer = nextPlayer();
             output.println("Would you like to challenge, " + challengerPlayer.name + "? " + "Please enter 'Y' or 'N'.");
-            if (challengerPlayer.getClass().equals(HumanPlayer.class)) {
-                challengeChoice = input.next();
-            } else if (challengerPlayer.getClass().equals(Bot.class)) {
-                challengeChoice = challengeDecision[1];
-                output.println(challengeChoice);
-            } else if (challengerPlayer.getClass().equals(SmartBot.class)) {
-                challengeChoice = challengeDecision[(int) Math.floor(Math.random() * 2)];
-                output.println(challengeChoice);
-            }
-            if (challengeChoice.equalsIgnoreCase("Y")) {
+            String decisionToChallenge = challengerPlayer.decisionToChallenge();
+            if (decisionToChallenge.equalsIgnoreCase("Y")) {
                 isChallenged = true;
                 cheated();
             } else isChallenged = false;
         }
 
-
     }
+
+//    private void challenged() {
+//        if (getTopCard().number == 14 && !isChallenged) {
+//            String challengeChoice = "";
+//            String[] challengeDecision = new String[]{"Y", "N"};
+//            Player challengerPlayer = nextPlayer();
+//            output.println("Would you like to challenge, " + challengerPlayer.name + "? " + "Please enter 'Y' or 'N'.");
+//            if (challengerPlayer.getClass().equals(HumanPlayer.class)) {
+//                challengeChoice = input.next();
+//            } else if (challengerPlayer.getClass().equals(Bot.class)) {
+//                challengeChoice = challengeDecision[1];
+//                output.println(challengeChoice);
+//            } else if (challengerPlayer.getClass().equals(SmartBot.class)) {
+//                challengeChoice = challengeDecision[(int) Math.floor(Math.random() * 2)];
+//                output.println(challengeChoice);
+//            }
+//            if (challengeChoice.equalsIgnoreCase("Y")) {
+//                isChallenged = true;
+//                cheated();
+//            } else isChallenged = false;
+//        }
+//
+//    }
 
 
     //if the draw pile runs out, the discard pile will be shuffled and become the new draw pile. The first card will be placed on the discard pile
@@ -554,60 +564,59 @@ public class Game {
         } else {
             do {
                 output.println(currentPlayer.name + " --> You may select a different color to play: 'R' for red, 'B' for blue, 'G' for green and 'Y' for yellow");
-                Scanner input = new Scanner(System.in);
-                String c = "";
-                String[] colorStrings = {"R", "Y", "G", "B"};
-                if (currentPlayer.getClass().equals(HumanPlayer.class)) {
-                    c = input.next();
-                } else if (currentPlayer.getClass().equals(Bot.class)) {
-                    c = colorStrings[(int) Math.floor(Math.random() * 4)];
-                } else if (currentPlayer.getClass().equals(SmartBot.class)) {
-                    c = ((SmartBot) currentPlayer).smartBotChoosesColor();
-                }
-
+//                Scanner input = new Scanner(System.in);
+                String c = currentPlayer.chooseColor();
+//                String[] colorStrings = {"R", "Y", "G", "B"};
+//                if (currentPlayer.getClass().equals(HumanPlayer.class)) {
+//                    c = input.next();
+//                } else if (currentPlayer.getClass().equals(Bot.class)) {
+//                    c = colorStrings[(int) Math.floor(Math.random() * 4)];
+//                } else if (currentPlayer.getClass().equals(SmartBot.class)) {
+//                    c = ((SmartBot) currentPlayer).chooseColor();
+//                }
                 if (c.equalsIgnoreCase("R")) {
-                    if (getPreviousCard().color.name().equals("BLACK"))
-                        previousColor = currentColor;
-                    else previousColor = (Color) getPreviousCard().color;
-
-                    currentColor = Color.RED;
-
                     if (discardDeck.deck.size() == 1) {
                         previousColor = currentColor;
                     }
+                    else{
+                        if (getPreviousCard().color.name().equals("BLACK"))
+                            previousColor = currentColor;
+                        else previousColor = (Color) getPreviousCard().color;
+                    }
+                    currentColor = Color.RED;
                     output.println("Color changed to red / previous color was " + previousColor);
                     invalidColor = false;
                 } else if (c.equalsIgnoreCase("B")) {
-
-                    if (getPreviousCard().color.name().equals("BLACK"))
-                        previousColor = currentColor;
-                    else previousColor = (Color) getPreviousCard().color;
-
-                    currentColor = Color.BLUE;
                     if (discardDeck.deck.size() == 1) {
                         previousColor = currentColor;
+                    }else{
+                        if (getPreviousCard().color.name().equals("BLACK"))
+                            previousColor = currentColor;
+                        else previousColor = (Color) getPreviousCard().color;
                     }
+                    currentColor = Color.BLUE;
                     output.println("Color changed to blue / previous color was " + previousColor);
                     invalidColor = false;
                 } else if (c.equalsIgnoreCase("G")) {
-                    if (getPreviousCard().color.name().equals("BLACK"))
-                        previousColor = currentColor;
-                    else previousColor = (Color) getPreviousCard().color;
-
-                    currentColor = Color.GREEN;
                     if (discardDeck.deck.size() == 1) {
                         previousColor = currentColor;
+                    }else{
+                        if (getPreviousCard().color.name().equals("BLACK"))
+                            previousColor = currentColor;
+                        else previousColor = (Color) getPreviousCard().color;
                     }
+                    currentColor = Color.GREEN;
                     output.println("Color changed to green / previous color was " + previousColor);
                     invalidColor = false;
                 } else if (c.equalsIgnoreCase("Y")) {
-                    if (getPreviousCard().color.name().equals("BLACK"))
-                        previousColor = currentColor;
-                    else previousColor = (Color) getPreviousCard().color;
-                    currentColor = Color.YELLOW;
                     if (discardDeck.deck.size() == 1) {
                         previousColor = currentColor;
+                    }else{
+                        if (getPreviousCard().color.name().equals("BLACK"))
+                            previousColor = currentColor;
+                        else previousColor = (Color) getPreviousCard().color;
                     }
+                    currentColor = Color.YELLOW;
                     output.println("Color changed to yellow / previous color was " + previousColor);
                     invalidColor = false;
 

@@ -53,4 +53,16 @@ public class Bot extends Player{
         boolean[] unoDeclareDecision = new boolean[]{true, false};
         return unoDeclareDecision[(int)Math.floor(Math.random()*2)];
     }
+
+    @Override
+    public String decisionToChallenge() {
+        System.out.println("No!");
+        return "N";
+    }
+
+    @Override
+    public String chooseColor() {
+        String[] colorStrings = {"R", "Y", "G", "B"};
+        return colorStrings[(int) Math.floor(Math.random() * 4)];
+    }
 }

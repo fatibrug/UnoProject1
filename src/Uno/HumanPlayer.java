@@ -52,25 +52,26 @@ public class HumanPlayer extends Player {
             System.out.println("If you have no valid card to play, please enter 'd' to draw a card or 's' to skip if you have already drawn a card");
             System.out.println("If you need help, please enter 'h' for help");
             action = input.nextLine();
-
-            if (action.chars().allMatch(Character::isDigit) && Integer.parseInt(action) > 0 && Integer.parseInt(action) <= hand.size()) {
-                return action;
-            }
-            else if (action.equals("d")) {
-                action = "draw";
-            }
-            else if (action.equals("h")) {
-                action = "help";
-            }
-            else if (action.equals("s")) {
-                action = "skip";
-            }
-            else {
-                System.out.println("Please enter a valid choice of action!");
+            try {
+                if (action.chars().allMatch(Character::isDigit) && Integer.parseInt(action) > 0 && Integer.parseInt(action) <= hand.size()) {
+                    return action;
+                } else if (action.equals("d")) {
+                    action = "draw";
+                } else if (action.equals("h")) {
+                    action = "help";
+                } else if (action.equals("s")) {
+                    action = "skip";
+                } else {
+                    System.out.println("Please enter a valid choice of action!");
+                    inputError = true;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("please enter a valid input!");
                 inputError = true;
             }
+
         } while (inputError);
-            return action;
+        return action;
     }
 
     @Override
@@ -83,18 +84,30 @@ public class HumanPlayer extends Player {
         super.gainPoints(gainedPoints);
     }
 
-//    ask the player if they want to decalre "uno"
-    public boolean unoDeclare(){
+    //    ask the player if they want to decalre "uno"
+    public boolean unoDeclare() {
         System.out.println("If you have only one card left, please enter 'uno'! ");
         Scanner input = new Scanner(System.in);
         String action = input.nextLine();
-        if(action.compareToIgnoreCase("uno")==0){
-           return true;
-        } return false;
+        if (action.compareToIgnoreCase("uno") == 0) {
+            return true;
+        }
+        return false;
     }
 
+    @Override
+    public String decisionToChallenge() {
+        Scanner input = new Scanner(System.in);
+        String challengeChoice = input.next();
+        return challengeChoice;
+    }
 
-
+    @Override
+    public String chooseColor() {
+        Scanner input = new Scanner(System.in);
+        String colorChoice = input.next();
+        return colorChoice;
+    }
 }
 
 

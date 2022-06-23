@@ -38,7 +38,7 @@ public abstract class Player {
     public abstract boolean unoDeclare();//if the player declares uno or not
     public abstract String inputAction(Card topCard, Color currentColor);
     public abstract Card play(String s);
-
-
+    public abstract String decisionToChallenge();
     public abstract void resetBotHasDrawn();
+    public abstract String chooseColor();
 }

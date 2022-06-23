@@ -25,11 +25,11 @@ public class SmartBot extends Player{
         }
     }
 
-    public String smartBotChoosesColor(){
+    @Override
+    public String chooseColor(){
         HashMap<String, Integer> colorCount = new HashMap<>();
         String returnColorCode = "";
         String cardColor = "";
-
         for(Card c: hand){
             cardColor = c.color.name();
             if(cardColor.equals("RED")){
@@ -138,5 +138,13 @@ public class SmartBot extends Player{
     @Override
     public boolean unoDeclare() {
         return true;
+    }
+
+    @Override
+    public String decisionToChallenge() {
+        String[] challengeDecision = new String[]{"Y", "N"};
+        String challengeChoice = challengeDecision[(int) Math.floor(Math.random() * 2)];
+        System.out.println(challengeChoice);
+        return challengeChoice;
     }
 }

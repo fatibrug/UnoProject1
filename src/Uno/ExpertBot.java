@@ -48,4 +48,14 @@ public class ExpertBot extends Player {
     public boolean unoDeclare() {
         return true;
     }
+
+    @Override
+    public String decisionToChallenge() {
+        return "N";
+    }
+
+    @Override
+    public String chooseColor() {
+        return null;
+    }
 }
