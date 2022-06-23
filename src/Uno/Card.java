@@ -1,5 +1,7 @@
 package Uno;
 
+import java.util.Objects;
+
 public class Card {
     protected int number;
     protected Enum color = Color.BLACK;
@@ -50,6 +52,19 @@ public class Card {
             cardPrint = "Color Selection";
         }
         return cardPrint;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return number == card.number && Objects.equals(color, card.color);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, color);
     }
 }
 

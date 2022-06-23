@@ -2,16 +2,27 @@ package Uno;
 
 import java.util.ArrayList;
 
-public class Player {
+public abstract class Player {
     protected String name;
-    protected static int playerNr=0;
     protected ArrayList<Card> hand= new ArrayList<>();
-    protected int points;
+    protected int points=0;
+
+    public Player(){
+    }
 
     public Player(String name) {
         this.name = name;
-        playerNr=playerNr++;
     }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
+
+    public abstract void play();
 
 
 }
