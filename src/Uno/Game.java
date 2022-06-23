@@ -103,7 +103,7 @@ public class Game {
 
         } else if (getTopCard().number == 14) { // +4
             colorSelection();
-            challenged();
+            challenge();
             if (isChallenged) {
                 cheated = challengePenalty();
                 if (!cheated) //If the current player did not cheat, the next player draw 6 cards and pass his turn
@@ -487,7 +487,7 @@ public class Game {
         return false;
     }
 
-    private void challenged() {
+    private void challenge() {
         if (!isChallenged) {
             Player challengerPlayer = nextPlayer();
             output.println("Would you like to challenge, " + challengerPlayer.name + "? " + "Please enter 'Y' or 'N'.");
